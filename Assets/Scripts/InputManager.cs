@@ -32,11 +32,7 @@ public class InputManager : MonoBehaviour
         input.UI.Inventory.performed += ctx => InventoryManager.instance.openInventory();
         input.UI.Crafting.performed += ctx => CraftingManager.instance.openCraft();
         input.UI.PauseMenu.performed += ctx => PauseMenu.instance.openPauseMenu();
-
         input.UI.BuildMode.performed += ctx => BuildManager.instance.ActiveBuildMode();
-        input.BuildMode.add.performed += ctx => BuildManager.instance.addIndexBar();
-        input.BuildMode.remove.performed += ctx => BuildManager.instance.removeIndexBar();
-        input.BuildMode.rotate.performed += ctx => BuildManager.instance.rotate();
     }
 
     #endregion
@@ -53,14 +49,15 @@ public class InputManager : MonoBehaviour
         input.Disable();
     }
 
-    #endregion  
+    #endregion
 
     #region GetMapActions
 
-    public AllInput.PlayerActions getPlayerInput()
-    {
-        return input.Player;
-    }
+    public AllInput.PlayerActions getPlayerInput() => input.Player;
+
+    public AllInput.BuildModeActions getBuildInput() => input.BuildMode;
+
+    public AllInput.DebugActions GetDebugInput() => input.Debug;
 
     #endregion
 

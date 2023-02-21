@@ -24,8 +24,6 @@ public class BackStorage
         {
             counts[index] += itemStack.count;
         }
-        Debug.Log("item added");
-        PrintStockage();
     }
     public int RemoveItemStack(ItemStack itemStack)
     {

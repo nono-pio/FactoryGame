@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System;
 
 public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -12,7 +13,10 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     [HideInInspector] public Item item;
     [HideInInspector] public int count = 1;
+
     [HideInInspector] public Transform parentAfterDrag;
+    [HideInInspector] public delegate void DragFunction();
+    [HideInInspector] public DragFunction dragFunction;
 
     public void InitialisationItem(Item newItem, int _count = 1)
     {
@@ -44,5 +48,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         image.raycastTarget = true;
         transform.SetParent(parentAfterDrag);
+        if (dragFunction != null) dragFunction();
     }
 }

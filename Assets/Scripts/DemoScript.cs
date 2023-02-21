@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class DemoScript : MonoBehaviour
 {
@@ -12,27 +11,23 @@ public class DemoScript : MonoBehaviour
 
     [SerializeField] private GameObject prefabItemDrop;
 
-    public void PickupItem()
-    {
-        int restCount = InventoryManager.instance.AddItems(itemsToPickup[indexItemToPickup], countToAdd);
-        if (restCount == 0)
-            Debug.Log("item added");
-        else
-            Debug.Log("Inventory full rest " + restCount + " items");
-    }
+    private void Start() {SetInputDeguger(InputManager.instance.GetDebugInput());}
 
-    private void Update()
+    private void SetInputDeguger(AllInput.DebugActions debugInput)
     {
-        if(Input.GetKeyDown(KeyCode.A))
-            PickupItem();
-        else if (Input.GetKeyDown(KeyCode.D))
-            InventoryManager.instance.RemoveItem(itemsToPickup[indexItemToPickup], countToAdd);
-        else if (Input.GetKeyDown(KeyCode.H))
-        {
+        debugInput.action0.performed += ctx => InventoryManager.instance.AddItems(itemsToPickup[indexItemToPickup], countToAdd);
+        debugInput.action1.performed += ctx => InventoryManager.instance.RemoveItem(itemsToPickup[indexItemToPickup], countToAdd);;
+        debugInput.action2.performed += ctx => {
             GameObject item = Instantiate(prefabItemDrop);
             ItemOnGround scriptItem = item.GetComponentInChildren<ItemOnGround>();
             scriptItem.InstantiateItem(itemsToPickup[indexItemToPickup]);
-        } else if (Input.GetKeyDown(KeyCode.J))
-            InventoryManager.instance.backStorage.PrintStockage();
+            };
+        debugInput.action3.performed += ctx => InventoryManager.instance.backStorage.PrintStockage();
+        debugInput.action4.performed += ctx => MessageManager.instance.AddMessage(new Message("msg 1","bla"));
+        debugInput.action5.performed += ctx => MessageManager.instance.AddMessage(new Message("msg 2","alb"));
+        debugInput.action6.performed += ctx => {};
+        debugInput.action7.performed += ctx => {};
+        debugInput.action8.performed += ctx => {};
+        debugInput.action9.performed += ctx => {};
     }
 }

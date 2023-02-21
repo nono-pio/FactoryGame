@@ -72,18 +72,14 @@ public class CraftingManager : MonoBehaviour
     private void GetInventoryItems()
     {
         InventoryManager.instance.refreshItemAndCount();
-        inventoryBackStorage = InventoryManager.instance.backStorage;
+        invCraftLog();
     }
 
     private void MakeCraft(ItemCraft craft, int craftCount)
     {
         if (HasItems(craft, craftCount))
         {
-            invCraftLog();
-
             UpdateInv(craft, craftCount);
-            //UpdateCraftInvItems(craft, craftCount);
-
             invCraftLog();
         }
     }

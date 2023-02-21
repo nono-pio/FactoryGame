@@ -39,8 +39,8 @@ public class MovePlayer : MonoBehaviour
         rendererPlayer = GetComponentInChildren<RendererPlayer>();
 
         playerControls = InputManager.instance.getPlayerInput();
-        playerControls.RunStart.performed += ctx => RunningPressed();
-        playerControls.RunFinish.performed += ctx => RunningReleased();
+        playerControls.Run.started += ctx => isRunning = true;
+        playerControls.Run.canceled += ctx => isRunning = false;
     }
 
     void FixedUpdate()
@@ -62,15 +62,5 @@ public class MovePlayer : MonoBehaviour
 
             rendererPlayer.SetSprite(curInput, isRunning);
         }
-    }
-
-    private void RunningPressed()
-    {
-        isRunning = true;
-    }
-
-    private void RunningReleased()
-    {
-        isRunning = false;
     }
 }
