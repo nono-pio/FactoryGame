@@ -2350,7 +2350,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.2945532, g: 0.4881808, b: 0.7924528, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2367,7 +2367,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 2.99
+  orthographic size: 3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2391,7 +2391,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.52, y: -1.6, z: -10}
+  m_LocalPosition: {x: 1.97, y: -0.76, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3870,7 +3870,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2096295955}
         m_TargetAssemblyTypeName: CraftingManager, Assembly-CSharp
         m_MethodName: openCraft
-        m_Mode: 1
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11212,7 +11212,8 @@ MonoBehaviour:
   itemsToPickup:
   - {fileID: 11400000, guid: f90769d4ffaa4cf4bb2b47b266adf83c, type: 2}
   - {fileID: 11400000, guid: 907d5ceed62986f469469af22b757af0, type: 2}
-  indexItemToPickup: 0
+  - {fileID: 11400000, guid: d429637b93e16e048a4414059a1b130b, type: 2}
+  indexItemToPickup: 2
   countToAdd: 5
   slot: {fileID: 860232342}
   removeAll: 0
@@ -84449,6 +84450,7 @@ Transform:
   - {fileID: 2133482655}
   - {fileID: 1907848175}
   - {fileID: 1284395869}
+  - {fileID: 1745728991}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -85243,6 +85245,54 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7117282478251957878, guid: 26dc4a3244f4f4f49ab93f0ff00320f7, type: 3}
   m_PrefabInstance: {fileID: 1429740391}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1745728990
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1745728991}
+  - component: {fileID: 1745728992}
+  m_Layer: 0
+  m_Name: InteractManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1745728991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745728990}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1597448017}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1745728992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745728990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e046a4329b7796d4a8c591f9bd555a65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  interactRadius: 0.5
 --- !u!1 &1764695068 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7731890098763387155, guid: 26dc4a3244f4f4f49ab93f0ff00320f7, type: 3}

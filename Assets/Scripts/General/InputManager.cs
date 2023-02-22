@@ -17,12 +17,6 @@ public class InputManager : MonoBehaviour
         SetUIInput();
         input.Mouse.StartClick.performed += ctx => isClicking = true;
         input.Mouse.EndClick.performed += ctx => isClicking = false;
-        /*input.Mouse.Click.performed += ctx => 
-        {
-            Debug.Log("Click");
-            Vector3 posA = GetMouseWorldPosition();
-            TestBuildSys.instance.buildSquare(posA, 20);
-        };*/
     }
 
     #region UIKey
@@ -30,9 +24,11 @@ public class InputManager : MonoBehaviour
     private void SetUIInput()
     {
         input.UI.Inventory.performed += ctx => InventoryManager.instance.openInventory();
-        input.UI.Crafting.performed += ctx => CraftingManager.instance.openCraft();
+        input.UI.Crafting.performed += ctx => CraftingManager.instance.openCraft(false);
         input.UI.PauseMenu.performed += ctx => PauseMenu.instance.openPauseMenu();
         input.UI.BuildMode.performed += ctx => BuildManager.instance.ActiveBuildMode();
+
+        input.Mouse.Click.performed += ctx => InteractionManager.instance.onClick(GetMouseWorldPosition());
     }
 
     #endregion

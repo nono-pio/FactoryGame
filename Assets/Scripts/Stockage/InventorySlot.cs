@@ -1,15 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class BuildBarSlot : MonoBehaviour, IDropHandler
+public class InventorySlot : MonoBehaviour, IDropHandler
 {
     public void OnDrop(PointerEventData eventData)
     {
         if (transform.childCount == 0)
         {
-            InventoryItem inventoryItem = eventData.pointerDrag.GetComponent<InventoryItem>();
+            ItemUI inventoryItem = eventData.pointerDrag.GetComponent<ItemUI>();
             inventoryItem.parentAfterDrag = transform;
-            inventoryItem.dragFunction = BuildManager.instance.RefreshBuildBar;
         }
     }
 }

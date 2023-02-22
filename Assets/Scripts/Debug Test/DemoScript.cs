@@ -25,7 +25,7 @@ public class DemoScript : MonoBehaviour
         debugInput.action3.performed += ctx => InventoryManager.instance.backStorage.PrintStockage();
         debugInput.action4.performed += ctx => MessageManager.instance.AddMessage(new Message("msg 1","bla"));
         debugInput.action5.performed += ctx => MessageManager.instance.AddMessage(new Message("msg 2","alb"));
-        debugInput.action6.performed += ctx => {};
+        debugInput.action6.performed += ctx => CraftingManager.instance.openCraft(true);
         debugInput.action7.performed += ctx => {};
         debugInput.action8.performed += ctx => {};
         debugInput.action9.performed += ctx => {};

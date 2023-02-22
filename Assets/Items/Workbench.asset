@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94aecfe5d5f13a041b89cc119bd710bc, type: 3}
+  m_Name: Workbench
+  m_EditorClassIdentifier: 
+  tile:
+  - {fileID: 11400000, guid: c7b38c0187ae74d43bc30adcea789213, type: 2}
+  type: 3
+  prefabInteractable: {fileID: 8651982230635367966, guid: 1ea6cfc076a85004c9a7c237d4e72b06, type: 3}
+  stackable: 0
+  image: {fileID: 21300000, guid: 1dd5a96bc01d9024cbbd1593158d7516, type: 3}

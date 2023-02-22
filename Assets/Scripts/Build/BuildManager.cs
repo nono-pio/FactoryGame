@@ -79,43 +79,6 @@ public class BuildManager : MonoBehaviour
 
     #region Build Actions
 
-        /*
-        private void changePosCell(Vector2 input)
-        {
-            Vector3Int newCellPos = curCellPointed;
-            if (input == null || !isBuildModeActive) return;
-
-            if (input.x > 0) newCellPos.x++; //update hor position
-            else newCellPos.x--;
-
-            if (input.y > 0) newCellPos.y++; // update ver position
-            else newCellPos.y--;
-
-            moveCell(newCellPos);
-        }
-
-
-        private void moveCell(Vector3Int newPosCell)
-        {
-            if (isDeleting) //mode delete
-            {
-
-            } else //mode build
-            {
-                if (curCellPointed != newPosCell)
-                {
-                    mapForChecker.SetTile(curCellPointed, null);
-
-                    if (mapForBuild.GetTile(newPosCell) == null && selectedTiles != null)
-                    {
-                        mapForChecker.SetTile(newPosCell, selectedTiles[indexTile]);
-                    }
-                    
-                    curCellPointed = newPosCell;
-                }
-            }
-        }*/
-
         public void build()
         {
             if (isBuildModeActive && mapForBuild.GetTile(curCellPointed) == null && selectedTiles != null)
@@ -190,14 +153,14 @@ public class BuildManager : MonoBehaviour
 
     private void GetSelectedTile()
     {
-        InventoryItem itemInSlot = barSlots[indexBar].GetComponentInChildren<InventoryItem>();
-            if (itemInSlot == null || itemInSlot.item.tile == null)
-                selectedTiles = null;
-            else
-            {
-                indexTile = 0;
-                selectedTiles = itemInSlot.item.tile;
-            }
+        ItemUI itemInSlot = barSlots[indexBar].GetComponentInChildren<ItemUI>();
+        if (itemInSlot == null || itemInSlot.item.tile == null)
+            selectedTiles = null;
+        else
+        {
+            indexTile = 0;
+            selectedTiles = itemInSlot.item.tile;
+        }
     }
 
     public void addIndexBar()
@@ -250,7 +213,6 @@ public class BuildManager : MonoBehaviour
         buildInput.remove.performed += ctx => BuildManager.instance.removeIndexBar();
         buildInput.rotate.performed += ctx => BuildManager.instance.rotate();
         buildInput.delete.performed += ctx => SetModeDelete();
-        //buildInput.changeCell.performed += ctx => changePosCell(ctx.ReadValue<Vector2>());
     }
         
     #endregion

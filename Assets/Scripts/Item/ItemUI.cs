@@ -2,9 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-using System;
 
-public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     
     [Header("UI")]
@@ -15,6 +14,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public int count = 1;
 
     [HideInInspector] public Transform parentAfterDrag;
+
     [HideInInspector] public delegate void DragFunction();
     [HideInInspector] public DragFunction dragFunction;
 

@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -35,7 +33,7 @@ public class InventoryManager : MonoBehaviour
         // add item to all slot with same item for fill them
         foreach (var slot in inventorySlots)
         {
-            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+            ItemUI itemInSlot = slot.GetComponentInChildren<ItemUI>();
             if (itemInSlot != null && itemInSlot.item.stackable && itemInSlot.item == item && itemInSlot.count < maxStackItem)
             {
                 int spaceInSlot = maxStackItem - itemInSlot.count;
@@ -56,19 +54,27 @@ public class InventoryManager : MonoBehaviour
         // add last items in empty slots
         foreach (var slot in inventorySlots)
         {
-            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+            ItemUI itemInSlot = slot.GetComponentInChildren<ItemUI>();
             int countToAdd;
             if (itemInSlot == null)
             {
-                if (count > maxStackItem )
+                if (item.stackable)
                 {
-                    countToAdd = maxStackItem;
-                    count -= maxStackItem;
-                    SpawnNewItem(item, slot, countToAdd);
+                    if (count > maxStackItem )
+                    {
+                        countToAdd = maxStackItem;
+                        count -= maxStackItem;
+                        SpawnNewItem(item, slot, countToAdd);
+                    } else
+                    {
+                        SpawnNewItem(item, slot, count);
+                        return 0;
+                    }
                 } else
                 {
-                    SpawnNewItem(item, slot, count);
-                    return 0;
+                    SpawnNewItem(item, slot);
+                    count--;
+                    if (count <= 0) return 0;
                 }
             }
         }
@@ -82,7 +88,7 @@ public class InventoryManager : MonoBehaviour
         backStorage.Clear();
         foreach (var slot in inventorySlots)
         {
-            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+            ItemUI itemInSlot = slot.GetComponentInChildren<ItemUI>();
             if (itemInSlot != null)
                 backStorage.AddItemStack(new ItemStack(itemInSlot.item, itemInSlot.count));
         }
@@ -91,7 +97,7 @@ public class InventoryManager : MonoBehaviour
     public void SpawnNewItem(Item item, InventorySlot slot, int count = 1)
     {
         GameObject newItemGameObject = Instantiate(inventoryItemPrefab, slot.transform);
-        InventoryItem inventoryItem = newItemGameObject.GetComponent<InventoryItem>();
+        ItemUI inventoryItem = newItemGameObject.GetComponent<ItemUI>();
         inventoryItem.InitialisationItem(item, count);
     }
 
@@ -100,7 +106,7 @@ public class InventoryManager : MonoBehaviour
         backStorage.RemoveItemStack(new ItemStack(itemToRemove, countToRemove));
         for (int i = inventorySlots.Length - 1; i >= 0; i--)
         {
-            InventoryItem itemInSlot = inventorySlots[i].GetComponentInChildren<InventoryItem>();
+            ItemUI itemInSlot = inventorySlots[i].GetComponentInChildren<ItemUI>();
             if (itemInSlot != null && itemInSlot.item == itemToRemove)
             {
                 if(countToRemove >= itemInSlot.count)

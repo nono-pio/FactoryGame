@@ -8,6 +8,7 @@ public class Item : ScriptableObject
     [Header("Only Gameplay")]
     public TileBase[] tile = null;
     public ItemType type = ItemType.JustItem;
+    public GameObject prefabInteractable = null;
 
     [Header("Only UI")]
     public bool stackable = true;
@@ -20,5 +21,6 @@ public enum ItemType
 {
     Tool,
     Build,
-    JustItem
+    JustItem,
+    Interactable
 }

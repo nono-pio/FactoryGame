@@ -69,6 +69,17 @@ public class CraftingManager : MonoBehaviour
         itemCraftables = _itemCraftables.ToArray();
     }
 
+    private void SetActiveItemCraft(bool isWorkbench)
+    {
+        foreach (var craft in itemCraftables)
+        {
+            if(isWorkbench && !craft.craft.inCraftingTable)
+                craft.gameObject.SetActive(false);
+            else
+                craft.gameObject.SetActive(true);
+        }
+    }
+
     private void GetInventoryItems()
     {
         InventoryManager.instance.refreshItemAndCount();
@@ -160,13 +171,14 @@ public class CraftingManager : MonoBehaviour
         }
     }
 
-    public void openCraft()
+    public void openCraft(bool isWorkbench)
     {
         if (craftingUI.activeInHierarchy)
             PopupManager.instance.ClosePopup(popup);
         else
         {
             GetInventoryItems();
+            SetActiveItemCraft(isWorkbench);
             PopupManager.instance.OpenPopup(popup);
         }
     }
