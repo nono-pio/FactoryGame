@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Chest : MonoBehaviour, IInteractable
+public class SteelCrate : MonoBehaviour, IInteractable
 {
     public Message messageInteract => null;
 

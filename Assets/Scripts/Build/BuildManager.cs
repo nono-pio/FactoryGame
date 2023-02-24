@@ -86,6 +86,14 @@ public class BuildManager : MonoBehaviour
                 mapForBuild.SetTile(curCellPointed, selectedTiles[indexTile]);
                 mapForCollision.SetTile(curCellPointed, tileCollision);
                 mapForChecker.SetTile(curCellPointed, null);
+
+                Item itemSelected = barSlots[indexBar].transform.GetChild(0).GetComponent<ItemUI>().item;
+                if (itemSelected.prefabInteractable != null)
+                {
+                    Vector3 worldPos = mapForBuild.CellToWorld(curCellPointed);
+                    GameObject gameObject = Instantiate(itemSelected.prefabInteractable, transform.root);
+                    gameObject.transform.position = new Vector2(worldPos.x, worldPos.y + 0.55f);
+                }
             }
         }
 
@@ -94,7 +102,7 @@ public class BuildManager : MonoBehaviour
             if (isBuildModeActive && mapForBuild.GetTile(curCellPointed) != null)
             {
                 mapForBuild.SetTile(curCellPointed, null);
-                mapForCollision.SetTile(curCellPointed, tileCollision);
+                mapForCollision.SetTile(curCellPointed, null);
                 mapForChecker.SetTile(curCellPointed, null);
             }
         }
@@ -153,8 +161,8 @@ public class BuildManager : MonoBehaviour
 
     private void GetSelectedTile()
     {
-        ItemUI itemInSlot = barSlots[indexBar].GetComponentInChildren<ItemUI>();
-        if (itemInSlot == null || itemInSlot.item.tile == null)
+        ItemUI itemInSlot = barSlots[indexBar].transform.GetChild(0).GetComponent<ItemUI>();
+        if (itemInSlot.isNull || itemInSlot.item.tile == null || itemInSlot.item.tile.Length < 1)
             selectedTiles = null;
         else
         {
@@ -187,14 +195,12 @@ public class BuildManager : MonoBehaviour
 
     private void removeSelect()
     {
-        if (barSlots[indexBar].transform.childCount > 0)
-            barSlots[indexBar].transform.GetChild(0).localScale = Vector2.one;
+        barSlots[indexBar].transform.GetChild(0).localScale = Vector2.one;
     }
 
     private void addSelect()
     {
-        if (barSlots[indexBar].transform.childCount > 0)
-            barSlots[indexBar].transform.GetChild(0).localScale = selectedScale;
+        barSlots[indexBar].transform.GetChild(0).localScale = selectedScale;
     }
 
     public void RefreshBuildBar()

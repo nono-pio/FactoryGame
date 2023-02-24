@@ -23,7 +23,7 @@ public class InputManager : MonoBehaviour
     
     private void SetUIInput()
     {
-        input.UI.Inventory.performed += ctx => InventoryManager.instance.openInventory();
+        input.UI.Inventory.performed += ctx => Inventory.instance.Open();
         input.UI.Crafting.performed += ctx => CraftingManager.instance.openCraft(false);
         input.UI.PauseMenu.performed += ctx => PauseMenu.instance.openPauseMenu();
         input.UI.BuildMode.performed += ctx => BuildManager.instance.ActiveBuildMode();

@@ -55,7 +55,7 @@ public class Popup
 
     public void Close()
     {
-        popup.SetActive(false);
         closeFunction();
+        popup.SetActive(false);
     }
 }

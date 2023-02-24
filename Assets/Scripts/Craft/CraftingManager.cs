@@ -30,8 +30,6 @@ public class CraftingManager : MonoBehaviour
 
     private ItemCraft curItemCraft;
 
-    private BackStorage inventoryBackStorage;
-
     private Popup popup;
 
     // instance
@@ -51,7 +49,6 @@ public class CraftingManager : MonoBehaviour
         SetItemCraftDisplay(defaultCraft);
         SetItemCraft();
         craftingUI.SetActive(false);
-        inventoryBackStorage = InventoryManager.instance.backStorage;
 
         countInput.text = "1";
     }
@@ -73,16 +70,22 @@ public class CraftingManager : MonoBehaviour
     {
         foreach (var craft in itemCraftables)
         {
-            if(isWorkbench && !craft.craft.inCraftingTable)
-                craft.gameObject.SetActive(false);
+            if (isWorkbench) craft.gameObject.SetActive(true);
             else
-                craft.gameObject.SetActive(true);
+            {
+                if (!craft.craft.inCraftingTable)
+                {
+                    craft.gameObject.SetActive(true);
+                } else
+                {
+                    craft.gameObject.SetActive(false);
+                }
+            }
         }
     }
 
     private void GetInventoryItems()
     {
-        InventoryManager.instance.refreshItemAndCount();
         invCraftLog();
     }
 
@@ -98,7 +101,7 @@ public class CraftingManager : MonoBehaviour
     private bool HasItems(ItemCraft craft, int craftCount)
     {
         foreach (var needItem in craft.needItems)
-            if (!inventoryBackStorage.HasCount(needItem.item, needItem.count * craftCount)) // if item didn't exist or dosen't have enough
+            if (!Inventory.instance.stockage.HasItemStack(new ItemStack(needItem.item, needItem.count * craftCount))) // if item didn't exist or dosen't have enough
                 return false;
     
         return true;
@@ -108,9 +111,10 @@ public class CraftingManager : MonoBehaviour
     {
         foreach (var needItem in craft.needItems) // remove each item use for the craft 
         {
-            InventoryManager.instance.RemoveItem(needItem.item, needItem.count * craftCount);
+            Inventory.instance.stockage.RemoveItem(new ItemStack(needItem.item, needItem.count * craftCount));
         }
-        InventoryManager.instance.AddItems(craft.item, craftCount * craft.count); // add item created (nbcraft * nbcrafted per time)
+        Inventory.instance.stockage.AddItems(new ItemStack(craft.item, craftCount * craft.count)); // add item created (nbcraft * nbcrafted per time)
+        Inventory.instance.stockage.PrintStockage();
     }
 
     #region DisplayFunction
@@ -194,7 +198,7 @@ public class CraftingManager : MonoBehaviour
 
     private void invCraftLog()
     {
-        inventoryBackStorage.PrintStockage();
+        Inventory.instance.stockage.PrintStockage();
     }
     #endregion
 }

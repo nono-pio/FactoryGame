@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 1943617193699986199}
   - component: {fileID: 1943617193699986192}
   m_Layer: 5
-  m_Name: BuildBarSlot
+  m_Name: StockageSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -392,4 +392,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47d8cfc10c2e0094bb34e29ccc770735, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typeSlot: 1
+  typeSlot: 0
