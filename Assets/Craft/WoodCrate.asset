@@ -15,6 +15,7 @@ MonoBehaviour:
   item: {fileID: 11400000, guid: e862c442d190b044ab00d5713cdf51e3, type: 2}
   count: 1
   inCraftingTable: 1
+  typeOfCraft: 2
   needItems:
   - item: {fileID: 11400000, guid: f90769d4ffaa4cf4bb2b47b266adf83c, type: 2}
     count: 20

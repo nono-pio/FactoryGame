@@ -8,6 +8,7 @@ public class ItemCraft : ScriptableObject
     public Item item = null;
     public int count = 1;
     public bool inCraftingTable;
+    public CraftType typeOfCraft = CraftType.Other;
 
     [Header("Resource")]
     [SerializeField]
@@ -19,4 +20,13 @@ public class ItemCraft : ScriptableObject
         public Item item;
         public int count;
     }   
+}
+
+public enum CraftType
+{
+    Food,
+    Factory,
+    Stockage,
+    Other,
+    All
 }

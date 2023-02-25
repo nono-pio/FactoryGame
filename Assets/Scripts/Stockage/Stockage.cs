@@ -19,7 +19,6 @@ public class Stockage
             if (itemStack != null)
                 backStorage.AddItemStack(itemStack);
         }
-        backStorage.PrintStockage();
     }
     public ItemStack[] Get() { return stockage; }
 
@@ -101,6 +100,12 @@ public class Stockage
             }
         }
         return restCountToAdd;
+    }
+
+    public int GetCount(Item item)
+    {
+        ItemStack itemStack = backStorage.GetItemStack(item);
+        return (itemStack == null) ? 0 : itemStack.count;
     }
 
     public bool HasItemStack(ItemStack itemStack) => backStorage.HasCount(itemStack.item, itemStack.count);

@@ -18,7 +18,10 @@ public class StockageUI : MonoBehaviour
     {
         instance = this;
         popup = new Popup(stockageUI);
-        popup.closeFunction = () => {curStockage.Set(Get());};
+        popup.closeFunction = () =>
+        {
+            curStockage.Set(Get());
+        };
     }
 
     private void Start() 
@@ -36,6 +39,8 @@ public class StockageUI : MonoBehaviour
         typeStockage = stockageType;
 
         Refresh();
+
+        stockage.isUpdate = false;
     }
 
     public void Refresh()

@@ -12,8 +12,8 @@ public class Inventory : MonoBehaviour
 
     public void Open()
     {
-        SetActiveUI();
         StockageUI.instance.Open();
+        SetActiveUI();
     }
 
     public void SetActiveUI()

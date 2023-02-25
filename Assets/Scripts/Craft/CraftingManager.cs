@@ -13,7 +13,7 @@ public class CraftingManager : MonoBehaviour
     [SerializeField] private GameObject craftingUI;
     [SerializeField] private TextMeshProUGUI ItemName, ItemCount;
     [SerializeField] private Image ItemIcon;
-    [SerializeField] private TMP_InputField countInput; 
+    [SerializeField] private TMP_InputField countInput;
 
     [Header("Parent and Prefab")]
 
@@ -31,6 +31,8 @@ public class CraftingManager : MonoBehaviour
     private ItemCraft curItemCraft;
 
     private Popup popup;
+
+    private bool inWorkbench = false;
 
     // instance
     [HideInInspector] public static CraftingManager instance;
@@ -66,29 +68,6 @@ public class CraftingManager : MonoBehaviour
         itemCraftables = _itemCraftables.ToArray();
     }
 
-    private void SetActiveItemCraft(bool isWorkbench)
-    {
-        foreach (var craft in itemCraftables)
-        {
-            if (isWorkbench) craft.gameObject.SetActive(true);
-            else
-            {
-                if (!craft.craft.inCraftingTable)
-                {
-                    craft.gameObject.SetActive(true);
-                } else
-                {
-                    craft.gameObject.SetActive(false);
-                }
-            }
-        }
-    }
-
-    private void GetInventoryItems()
-    {
-        invCraftLog();
-    }
-
     private void MakeCraft(ItemCraft craft, int craftCount)
     {
         if (HasItems(craft, craftCount))
@@ -114,7 +93,6 @@ public class CraftingManager : MonoBehaviour
             Inventory.instance.stockage.RemoveItem(new ItemStack(needItem.item, needItem.count * craftCount));
         }
         Inventory.instance.stockage.AddItems(new ItemStack(craft.item, craftCount * craft.count)); // add item created (nbcraft * nbcrafted per time)
-        Inventory.instance.stockage.PrintStockage();
     }
 
     #region DisplayFunction
@@ -143,7 +121,36 @@ public class CraftingManager : MonoBehaviour
             itemNeedUI.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = craft.needItems[i].count.ToString();
         }
     }
-        
+    
+    public void SetActiveItemCraft(CraftType craftType)
+    { 
+        if(itemCraftables == null) return;
+        foreach (var craft in itemCraftables) //test working bench
+        {
+            if (inWorkbench)
+            {
+                craft.gameObject.SetActive(true);
+            }
+            else
+            {
+                if (!craft.craft.inCraftingTable)
+                {
+                    craft.gameObject.SetActive(true);
+                } else
+                {
+                    craft.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        // Test craftType Selected
+        if (craftType == CraftType.All) return;
+        foreach (var craft in itemCraftables)
+        {
+            if (craft.craft.typeOfCraft != craftType) craft.gameObject.SetActive(false);
+        }
+    }
+
     #endregion
 
     #region BUTTON
@@ -175,14 +182,30 @@ public class CraftingManager : MonoBehaviour
         }
     }
 
+    public void MaxCount()
+    {
+        int maxCount = 999_999_999;
+        foreach (var needItem in curItemCraft.needItems)
+        {
+            int inventoryCount = Inventory.instance.stockage.GetCount(needItem.item);
+            int maxCraftForNeedItem = Mathf.FloorToInt((float) inventoryCount / needItem.count);
+            if (maxCraftForNeedItem < maxCount) maxCount = maxCraftForNeedItem;
+        }
+
+        if (maxCount < 1 || maxCount == 999_999_999) count = 1;
+        else count = maxCount;
+
+        countInput.text = count.ToString();
+    }
+
     public void openCraft(bool isWorkbench)
     {
+        inWorkbench = isWorkbench;
         if (craftingUI.activeInHierarchy)
             PopupManager.instance.ClosePopup(popup);
         else
         {
-            GetInventoryItems();
-            SetActiveItemCraft(isWorkbench);
+            SetActiveItemCraft(CraftType.All);
             PopupManager.instance.OpenPopup(popup);
         }
     }
