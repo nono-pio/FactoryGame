@@ -7,6 +7,7 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private float interactRadius;
+    [SerializeField] private Transform parentInteractable;
 
     public void onClick(Vector2 WorldPosition)
     {
@@ -21,6 +22,12 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public void InstantiateIteractable(GameObject prefab, Vector3 worldPos)
+    {
+        GameObject gameObject = Instantiate(prefab, parentInteractable);
+        gameObject.transform.position = new Vector2(worldPos.x, worldPos.y + 0.55f);
     }
 }
 

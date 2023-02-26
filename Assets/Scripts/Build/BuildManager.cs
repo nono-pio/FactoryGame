@@ -91,8 +91,7 @@ public class BuildManager : MonoBehaviour
                 if (itemSelected.prefabInteractable != null)
                 {
                     Vector3 worldPos = mapForBuild.CellToWorld(curCellPointed);
-                    GameObject gameObject = Instantiate(itemSelected.prefabInteractable, transform.root);
-                    gameObject.transform.position = new Vector2(worldPos.x, worldPos.y + 0.55f);
+                    InteractionManager.instance.InstantiateIteractable(itemSelected.prefabInteractable, worldPos);
                 }
             }
         }

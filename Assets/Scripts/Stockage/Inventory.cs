@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    [HideInInspector] public Stockage stockage = new Stockage(24);
+    [SerializeField] private int slotSize = 24;
+    [HideInInspector] public Stockage stockage;
     [HideInInspector] public TypeStockage typeStockage = TypeStockage.PlayerInventory;
 
     public static Inventory instance;
-    private void Awake() {
+    private void Awake()
+    {
+        stockage = new Stockage(slotSize);
         instance = this;
     }
 

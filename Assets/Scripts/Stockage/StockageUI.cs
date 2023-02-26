@@ -35,6 +35,13 @@ public class StockageUI : MonoBehaviour
     {
         if (stockage == curStockage && !stockage.isUpdate) return; // if same stockage don't recharge the UI
 
+        Debug.Log(stockage.slotCount);
+        if (curStockage == null) SetSlot(0, stockage.slotCount);
+        if (curStockage != null && curStockage.slotCount != stockage.slotCount)
+        {
+            SetSlot(curStockage.slotCount, stockage.slotCount);
+        }
+
         curStockage = stockage;
         typeStockage = stockageType;
 
@@ -45,7 +52,7 @@ public class StockageUI : MonoBehaviour
 
     public void Refresh()
     {
-        for (int i = 0; i < items.Length; i++ )
+        for (int i = 0; i < curStockage.slotCount; i++ )
         {
             if (curStockage.stockage[i] != null) // if need to set a item
             {
@@ -60,10 +67,31 @@ public class StockageUI : MonoBehaviour
         }
     }
 
+    private void SetSlot(int curSlotCount, int newSlotCount)
+    {
+        if (curSlotCount < newSlotCount)
+        {
+            for (int i = curSlotCount; i < newSlotCount; i++)
+            {
+                Debug.Log(i);
+                items[i].transform.parent.gameObject.SetActive(true);
+                Debug.Log(items[i].transform.parent.name);
+            }
+        } else
+        {
+            for (int i = newSlotCount; i < curSlotCount; i++)
+            {
+                Debug.Log(i);
+                items[i].transform.parent.gameObject.SetActive(false);
+                Debug.Log(items[i].transform.parent.name);
+            }
+        }
+    }
+
     public ItemStack[] Get()
     {
-        ItemStack[] itemStacks = new ItemStack[items.Length];
-        for (int i = 0; i < items.Length; i++)
+        ItemStack[] itemStacks = new ItemStack[curStockage.slotCount];
+        for (int i = 0; i < curStockage.slotCount; i++)
         {
             if (!items[i].isNull)
                 itemStacks[i] = new ItemStack(items[i].item, items[i].count);
@@ -75,7 +103,7 @@ public class StockageUI : MonoBehaviour
 
     public void RemoveItem(Item itemToRemove, int countToRemove)
     {
-        for (int i = items.Length - 1; i >= 0; i--)
+        for (int i = curStockage.slotCount - 1; i >= 0; i--)
         {
             if (items[i].gameObject.activeSelf && items[i].item == itemToRemove)
             {
@@ -93,7 +121,7 @@ public class StockageUI : MonoBehaviour
         }
     }
 
-    public int AddItems(Item newItem, int count = 1)
+    public int AddItems(Item newItem, int count = 1) //Todo
     {
         // add item to all slot with same item for fill them
         foreach (var item in items)

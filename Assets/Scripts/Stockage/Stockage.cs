@@ -3,9 +3,11 @@ public class Stockage
     private BackStorage backStorage = new BackStorage();
     public ItemStack[] stockage;
     public bool isUpdate = false;
+    public int slotCount;
 
     public Stockage(int nbSlot)
     {
+        slotCount = nbSlot;
         stockage = new ItemStack[nbSlot];
     }
 

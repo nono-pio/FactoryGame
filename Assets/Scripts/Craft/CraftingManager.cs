@@ -92,7 +92,11 @@ public class CraftingManager : MonoBehaviour
         {
             Inventory.instance.stockage.RemoveItem(new ItemStack(needItem.item, needItem.count * craftCount));
         }
-        Inventory.instance.stockage.AddItems(new ItemStack(craft.item, craftCount * craft.count)); // add item created (nbcraft * nbcrafted per time)
+        int restItem = Inventory.instance.stockage.AddItems(new ItemStack(craft.item, craftCount * craft.count)); // add item created (nbcraft * nbcrafted per time)
+        if (restItem > 0)
+        {
+            ItemManager.instance.dropItem(Player.instance.transform.position, new ItemStack(craft.item, restItem));
+        }
     }
 
     #region DisplayFunction

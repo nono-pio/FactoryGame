@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Conveyor
   m_EditorClassIdentifier: 
   item: {fileID: 11400000, guid: 907d5ceed62986f469469af22b757af0, type: 2}
-  count: 3
+  count: 10
   inCraftingTable: 0
   typeOfCraft: 1
   needItems:
