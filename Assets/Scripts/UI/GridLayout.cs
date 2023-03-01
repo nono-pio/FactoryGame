@@ -20,7 +20,8 @@ public class GridLayout : LayoutGroup
         FixedWidth,
         FixedHeight,
         FixedWidthHeight,
-        Square
+        Square,
+        RatioCell
     }
 
     [SerializeField] private GridFitType gridFit;
@@ -30,6 +31,8 @@ public class GridLayout : LayoutGroup
     [SerializeField] private Vector2 spacing;
 
     [SerializeField] private Vector2 cellSize;
+
+    [SerializeField] private Vector2 referenceCell = Vector2.one;
 
     private float childSizeModeSquare;
 
@@ -49,7 +52,7 @@ public class GridLayout : LayoutGroup
         float realParentHeight = height - spacing.y - padding.top - padding.bottom;
 
         bool needStop = Restriction(childCount);
-        if (needStop) return;
+        if (needStop || realParentWidth <= 0 || realParentHeight <= 0) return;
 
         GetRowsColumns(realParentWidth, realParentHeight, childCount);
 
@@ -66,30 +69,31 @@ public class GridLayout : LayoutGroup
         {
             case GridFitType.BestFit:
             {
-                float floatColumns = Mathf.Sqrt(realParentWidth/realParentHeight * childCount);
+                float floatColumns = Mathf.Sqrt(realParentWidth/realParentHeight * referenceCell.y/referenceCell.x * childCount);
                 columns = Mathf.FloorToInt(floatColumns);
 
-                float floatRows = Mathf.Sqrt(realParentHeight/realParentWidth * childCount);
+                float floatRows = Mathf.Sqrt(realParentHeight/realParentWidth * referenceCell.x/referenceCell.y * childCount);
                 rows = Mathf.FloorToInt(floatRows);
 
-                float[] childSize = new float[4];
+                float[] childArea = new float[4];
                 int[] curRows = {rows, rows + 1, rows, rows + 1};
                 int[] curColumns = {columns, columns, columns + 1, columns + 1};
 
                 for(int i = 0; i < 4; i++)
                 {
-                    if (curRows[i]*curColumns[i] >= childCount)
+                    if (curRows[i] * curColumns[i] >= childCount)
                     {
-                        childSize[i] = CalculateChildSize(realParentWidth, realParentHeight, curColumns[i], curRows[i]).x;
+                        Vector2 child = CalculateChildSize(realParentWidth, realParentHeight, curColumns[i], curRows[i]);
+                        childArea[i] = child.x * child.y;
                     }
                 }
                 
-                int indexMaxSize = Array.IndexOf(childSize, Mathf.Max(childSize));
+                int indexMaxSize = Array.IndexOf(childArea, Mathf.Max(childArea));
 
-                if (indexMaxSize == -1 || Mathf.Max(childSize) == 0) Debug.Log("Error");
+                if (indexMaxSize == -1 || Mathf.Max(childArea) == 0) Debug.Log("Error");
                 else 
                 {
-                    childSizeModeSquare = childSize[indexMaxSize];
+                    childSizeModeSquare = childArea[indexMaxSize];
                     columns = curColumns[indexMaxSize];
                     rows = curRows[indexMaxSize];
                 }
@@ -150,6 +154,11 @@ public class GridLayout : LayoutGroup
                     sideLenght = cellHeight;
 
                 return new Vector2(sideLenght, sideLenght);
+            }
+            case ChildFitType.RatioCell:
+            {
+                float ratio = Mathf.Min(cellWidth/referenceCell.x, cellHeight/referenceCell.y);
+                return new Vector2(ratio * referenceCell.x, ratio * referenceCell.y);
             }
         }
         return Vector2.zero;
@@ -231,6 +240,7 @@ public class GridLayout : LayoutGroup
         {
             case GridFitType.BestFit:
             {
+                if (childFit != ChildFitType.Square && childFit != ChildFitType.RatioCell) childFit = ChildFitType.Square;
                 break;
             }
             case GridFitType.FixedColumns:
@@ -276,24 +286,21 @@ public class GridLayout : LayoutGroup
             }
             case ChildFitType.Square:
             {
+                referenceCell = Vector2.one;
+                break;
+            }
+            case ChildFitType.RatioCell:
+            {
+                if(referenceCell.x == 0 || referenceCell.y == 0) stop = true;
                 break;
             }
         }
         return stop;
     }
 
-    public override void CalculateLayoutInputVertical()
-    {
-        
-    }
+    public override void CalculateLayoutInputVertical() {}
 
-    public override void SetLayoutHorizontal()
-    {
-        
-    }
+    public override void SetLayoutHorizontal() {}
 
-    public override void SetLayoutVertical()
-    {
-        
-    }
+    public override void SetLayoutVertical() {}
 }

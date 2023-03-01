@@ -35,7 +35,6 @@ public class StockageUI : MonoBehaviour
     {
         if (stockage == curStockage && !stockage.isUpdate) return; // if same stockage don't recharge the UI
 
-        Debug.Log(stockage.slotCount);
         if (curStockage == null) SetSlot(0, stockage.slotCount);
         if (curStockage != null && curStockage.slotCount != stockage.slotCount)
         {
@@ -73,17 +72,13 @@ public class StockageUI : MonoBehaviour
         {
             for (int i = curSlotCount; i < newSlotCount; i++)
             {
-                Debug.Log(i);
                 items[i].transform.parent.gameObject.SetActive(true);
-                Debug.Log(items[i].transform.parent.name);
             }
         } else
         {
             for (int i = newSlotCount; i < curSlotCount; i++)
             {
-                Debug.Log(i);
                 items[i].transform.parent.gameObject.SetActive(false);
-                Debug.Log(items[i].transform.parent.name);
             }
         }
     }
