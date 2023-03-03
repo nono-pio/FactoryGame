@@ -5,7 +5,7 @@ using System;
 public class GridLayout : LayoutGroup
 {
 
-    enum GridFitType
+    public enum GridFitType
     {
         BestFit,
         FixedColumns,
@@ -14,7 +14,7 @@ public class GridLayout : LayoutGroup
         Square
     }
 
-    enum ChildFitType
+    public enum ChildFitType
     {
         AutoFill,
         FixedWidth,
@@ -24,20 +24,28 @@ public class GridLayout : LayoutGroup
         RatioCell
     }
 
-    [SerializeField] private GridFitType gridFit;
-    [SerializeField] private ChildFitType childFit;
+    public enum Corner
+    {
+        TopLeft,
+        TopRigth,
+        BottomLeft,
+        BottomRigth
+    }
 
-    [SerializeField] private int rows, columns;
-    [SerializeField] private Vector2 spacing;
+    #region SerializeField
+        
+    public GridFitType gridFit;
+    public ChildFitType childFit;
+    public Corner startCorner;
 
-    [SerializeField] private Vector2 cellSize;
+    public int rows, columns;
+    public Vector2 spacing;
 
-    [SerializeField] private Vector2 referenceCell = Vector2.one;
+    [Min(10)] public Vector2 cellSize;
 
-    private float childSizeModeSquare;
+    [Min(0)] public Vector2 referenceCell = Vector2.one;
 
-    private float restWidth;
-    private float restHeight;
+    #endregion
 
     public override void CalculateLayoutInputHorizontal()
     {
@@ -48,54 +56,67 @@ public class GridLayout : LayoutGroup
         float width = rectTransform.rect.width;
         float height = rectTransform.rect.height;
 
-        float realParentWidth = width - spacing.x - padding.left - padding.right;
-        float realParentHeight = height - spacing.y - padding.top - padding.bottom;
+        float realParentWidth = width - spacing.x - padding.horizontal;
+        float realParentHeight = height - spacing.y - padding.vertical;
+        Vector2 realSize = new Vector2(realParentWidth, realParentHeight);
 
         bool needStop = Restriction(childCount);
-        if (needStop || realParentWidth <= 0 || realParentHeight <= 0) return;
+        if (needStop || realSize.x <= 0 || realSize.y <= 0) return;
 
-        GetRowsColumns(realParentWidth, realParentHeight, childCount);
+        GetRowsColumns(realSize, childCount);
 
-        SetCellSize(realParentWidth, realParentHeight);
+        SetCellSize(realSize);
 
-        GetRestWidthHeight(realParentWidth, realParentHeight, childCount);
+        Vector2 restSize = GetRestWidthHeight(realSize, childCount);
 
-        SetChild(childCount);
+        SetChild(childCount, restSize);
     }
 
-    private void GetRowsColumns(float realParentWidth,float realParentHeight,int childCount )
+    private void GetRowsColumns(Vector2 realSize,int childCount )
     {
         switch (gridFit)
         {
             case GridFitType.BestFit:
             {
-                float floatColumns = Mathf.Sqrt(realParentWidth/realParentHeight * referenceCell.y/referenceCell.x * childCount);
-                columns = Mathf.FloorToInt(floatColumns);
-
-                float floatRows = Mathf.Sqrt(realParentHeight/realParentWidth * referenceCell.x/referenceCell.y * childCount);
-                rows = Mathf.FloorToInt(floatRows);
-
-                float[] childArea = new float[4];
-                int[] curRows = {rows, rows + 1, rows, rows + 1};
-                int[] curColumns = {columns, columns, columns + 1, columns + 1};
-
-                for(int i = 0; i < 4; i++)
+                if (childFit == ChildFitType.FixedWidth)
                 {
-                    if (curRows[i] * curColumns[i] >= childCount)
+                    columns = Mathf.FloorToInt(realSize.x / cellSize.x);
+                    rows = Mathf.CeilToInt(childCount/ (float) columns);
+
+                } else if (childFit == ChildFitType.FixedHeight)
+                {
+                    rows = Mathf.FloorToInt(realSize.y / cellSize.y);
+                    columns = Mathf.CeilToInt(childCount/ (float) rows);
+
+                }else
+                {
+                    float floatColumns = Mathf.Sqrt(realSize.x / realSize.y * referenceCell.y/referenceCell.x * childCount);
+                    columns = Mathf.FloorToInt(floatColumns);
+
+                    float floatRows = Mathf.Sqrt(realSize.y / realSize.x * referenceCell.x/referenceCell.y * childCount);
+                    rows = Mathf.FloorToInt(floatRows);
+
+                    float[] childArea = new float[4];
+                    int[] curRows = {rows, rows + 1, rows, rows + 1};
+                    int[] curColumns = {columns, columns, columns + 1, columns + 1};
+
+                    for(int i = 0; i < 4; i++)
                     {
-                        Vector2 child = CalculateChildSize(realParentWidth, realParentHeight, curColumns[i], curRows[i]);
-                        childArea[i] = child.x * child.y;
+                        if (curRows[i] * curColumns[i] >= childCount)
+                        {
+                            Vector2 child = CalculateChildSize(realSize, curColumns[i], curRows[i]);
+                            childArea[i] = child.x * child.y;
+                        }
                     }
-                }
-                
-                int indexMaxSize = Array.IndexOf(childArea, Mathf.Max(childArea));
+                    
+                    int indexMaxSize = Array.IndexOf(childArea, Mathf.Max(childArea));
 
-                if (indexMaxSize == -1 || Mathf.Max(childArea) == 0) Debug.Log("Error");
-                else 
-                {
-                    childSizeModeSquare = childArea[indexMaxSize];
-                    columns = curColumns[indexMaxSize];
-                    rows = curRows[indexMaxSize];
+                    if (indexMaxSize == -1 || Mathf.Max(childArea) == 0) Debug.Log("Error");
+                    else 
+                    {
+                        columns = curColumns[indexMaxSize];
+                        rows = curRows[indexMaxSize];
+                    }
                 }
                 break;
             }
@@ -123,10 +144,10 @@ public class GridLayout : LayoutGroup
         }
     }
 
-    private Vector2 CalculateChildSize(float realParentWidth, float realParentHeight, int _columns, int _rows)
+    private Vector2 CalculateChildSize(Vector2 realSize, int _columns, int _rows)
     {
-        float cellWidth = realParentWidth/ (float) _columns;
-        float cellHeight = realParentHeight / (float) _rows;
+        float cellWidth = realSize.x/ (float) _columns;
+        float cellHeight = realSize.y / (float) _rows;
         switch (childFit)
         {
             case ChildFitType.AutoFill:
@@ -147,11 +168,7 @@ public class GridLayout : LayoutGroup
             }
             case ChildFitType.Square:
             {
-                float sideLenght;
-                if (cellHeight > cellWidth)
-                    sideLenght = cellWidth;
-                else 
-                    sideLenght = cellHeight;
+                float sideLenght = Mathf.Min(cellWidth, cellHeight);
 
                 return new Vector2(sideLenght, sideLenght);
             }
@@ -164,53 +181,24 @@ public class GridLayout : LayoutGroup
         return Vector2.zero;
     }
 
-    private void SetCellSize(float realParentWidth, float realParentHeight)
+    private void SetCellSize(Vector2 realSize)
     {
-        cellSize = CalculateChildSize(realParentWidth, realParentHeight, columns, rows);
+        cellSize = CalculateChildSize(realSize, columns, rows);
     }
 
-    private void GetRestWidthHeight(float realParentWidth, float realParentHeight, int childCount)
+    private Vector2 GetRestWidthHeight(Vector2 realSize, int childCount)
     {
-        restWidth = realParentWidth - cellSize.x * columns;
-        restHeight = realParentHeight - cellSize.y * rows;
+        float restWidth = realSize.x - cellSize.x * columns;
+        float restHeight = realSize.y - cellSize.y * rows;
+        return new Vector2(restWidth, restHeight);
     }
 
-    private void SetChild(int childCount)
+    private void SetChild(int childCount, Vector2 restSize)
     {
-        float childAliX = 0, childAliY = 0;
-        switch (childAlignment)
-        {
-            case TextAnchor.UpperLeft:
-                break;
-            case TextAnchor.UpperCenter:
-                childAliX = restWidth / 2;
-                break;
-            case TextAnchor.UpperRight:
-                childAliX = restWidth;
-                break;
-            case TextAnchor.MiddleLeft:
-                childAliY = restHeight / 2;
-                break;
-            case TextAnchor.MiddleCenter:
-                childAliX = restWidth / 2;
-                childAliY = restHeight / 2;
-                break;
-            case TextAnchor.MiddleRight:
-                childAliX = restWidth;
-                childAliY = restHeight / 2;
-                break;
-            case TextAnchor.LowerLeft:
-                childAliY = restHeight;
-                break;
-            case TextAnchor.LowerCenter:
-                childAliX = restWidth / 2;
-                childAliY = restHeight;
-                break;
-            case TextAnchor.LowerRight:
-                childAliX = restWidth;
-                childAliY = restHeight;
-                break;
-        }
+        Vector2 childAli = restSize * UITools.TextAnchorPosition(childAlignment);
+
+        bool startTop = startCorner == Corner.TopLeft || startCorner == Corner.TopRigth;
+        bool startLeft = startCorner == Corner.BottomLeft || startCorner == Corner.TopLeft;
 
         int rowsCount, columnsCount;
 
@@ -219,13 +207,13 @@ public class GridLayout : LayoutGroup
 
         for (int i = 0; i < childCount; i++)
         {
-            rowsCount = i / columns;
-            columnsCount = i % columns;
+            rowsCount = startTop ? i / columns : (rows - 1) - i / columns;
+            columnsCount = startLeft ? i % columns : (columns - 1) - i % columns;
 
             var item = rectChildren[i];
 
-            var xPos = (cellSize.x + spacingX) * columnsCount + padding.left + childAliX;
-            var yPos = (cellSize.y + spacingY) * rowsCount + padding.top + childAliY;
+            var xPos = (cellSize.x + spacingX) * columnsCount + padding.left + childAli.x;
+            var yPos = (cellSize.y + spacingY) * rowsCount + padding.top + childAli.y;
 
             SetChildAlongAxis(item, 0, xPos, cellSize.x);
             SetChildAlongAxis(item, 1, yPos, cellSize.y);
@@ -240,7 +228,7 @@ public class GridLayout : LayoutGroup
         {
             case GridFitType.BestFit:
             {
-                if (childFit != ChildFitType.Square && childFit != ChildFitType.RatioCell) childFit = ChildFitType.Square;
+                if(childFit == ChildFitType.AutoFill) childFit = ChildFitType.Square;
                 break;
             }
             case GridFitType.FixedColumns:
@@ -282,6 +270,7 @@ public class GridLayout : LayoutGroup
             case ChildFitType.FixedWidthHeight:
             {
                 if (cellSize.x == 0 || cellSize.y == 0) stop = true;
+                referenceCell = cellSize;
                 break;
             }
             case ChildFitType.Square:
