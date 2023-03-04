@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+[AddComponentMenu("Layout/Grid Layout")]
+[RequireComponent(typeof(RectTransform))]
 public class GridLayout : LayoutGroup
 {
 

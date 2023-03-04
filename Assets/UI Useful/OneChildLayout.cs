@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[AddComponentMenu("Layout/One Child Layout")]
+[RequireComponent(typeof(RectTransform))]
 public class OneChildLayout : LayoutGroup
 {
 
