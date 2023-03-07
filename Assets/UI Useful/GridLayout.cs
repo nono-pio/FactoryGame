@@ -36,16 +36,17 @@ public class GridLayout : LayoutGroup
 
     #region SerializeField
         
-    public GridFitType gridFit;
-    public ChildFitType childFit;
-    public Corner startCorner;
+    public GridFitType gridFit; //editor
+    public ChildFitType childFit; //editor
+    public Corner startCorner;  //editor
 
     public int rows, columns;
-    public Vector2 spacing;
+    public Vector2 spacing; //editor
+    public bool spacingFitGridSize; //editor
 
-    [Min(10)] public Vector2 cellSize;
+    [Min(10)] public Vector2 cellSize; //editor
 
-    [Min(0)] public Vector2 referenceCell = Vector2.one;
+    [Min(0)] public Vector2 referenceCell = Vector2.one; // editor
 
     #endregion
 
@@ -55,15 +56,26 @@ public class GridLayout : LayoutGroup
 
         int childCount = rectChildren.Count;
 
+        bool needStop = Restriction(childCount);
+        if (needStop) return;
+
         float width = rectTransform.rect.width;
         float height = rectTransform.rect.height;
 
-        float realParentWidth = width - spacing.x - padding.horizontal;
-        float realParentHeight = height - spacing.y - padding.vertical;
-        Vector2 realSize = new Vector2(realParentWidth, realParentHeight);
+        float realParentWidth;
+        float realParentHeight;
+        if (spacingFitGridSize)
+        {
+            realParentWidth = width * (1 - spacing.x) - padding.horizontal;
+            realParentHeight = height * (1 - spacing.y) - padding.vertical;
+        } else 
+        {
+            realParentWidth = width - spacing.x - padding.horizontal;
+            realParentHeight = height - spacing.y - padding.vertical;
+        }
 
-        bool needStop = Restriction(childCount);
-        if (needStop || realSize.x <= 0 || realSize.y <= 0) return;
+        Vector2 realSize = new Vector2(realParentWidth, realParentHeight);
+        if (realSize.x <= 0 || realSize.y <= 0) return;
 
         GetRowsColumns(realSize, childCount);
 
@@ -204,8 +216,8 @@ public class GridLayout : LayoutGroup
 
         int rowsCount, columnsCount;
 
-        float spacingX = spacing.x / (float) (columns - 1);
-        float spacingY = spacing.y / (float) (rows - 1);
+        float spacingX = (spacingFitGridSize ? rectTransform.rect.width * spacing.x : spacing.x) / (float) (columns - 1);
+        float spacingY = (spacingFitGridSize ? rectTransform.rect.height * spacing.y : spacing.y) / (float) (rows - 1);
 
         for (int i = 0; i < childCount; i++)
         {
@@ -226,6 +238,14 @@ public class GridLayout : LayoutGroup
     {
         bool stop = false;
         if (childCount == 0) return true;
+        if (spacingFitGridSize) 
+        {
+            if(spacing.x > 1) spacing.x = 1;
+            else if (spacing.x < 0) spacing.x = 0;
+
+            if(spacing.y > 1) spacing.y = 1;
+            else if (spacing.y < 0) spacing.y = 0;
+        }
         switch (gridFit)
         {
             case GridFitType.BestFit:
