@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class StockageUI : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class StockageUI : MonoBehaviour
 
     [SerializeField] public int maxStackItem;
     [SerializeField] private ItemUI[] items;
+
+    [SerializeField] private GridLayout gridLayout;
 
     private Stockage curStockage;
     private TypeStockage typeStockage;
@@ -27,6 +30,7 @@ public class StockageUI : MonoBehaviour
     private void Start() 
     {
         Set(Inventory.instance.stockage, Inventory.instance.typeStockage);
+        gridLayout.refreshEnable = false;
         
         stockageUI.SetActive(false);
     }
@@ -45,6 +49,7 @@ public class StockageUI : MonoBehaviour
         typeStockage = stockageType;
 
         Refresh();
+        StartCoroutine(refreshGrid(0.01f));
 
         stockage.isUpdate = false;
     }
@@ -55,7 +60,7 @@ public class StockageUI : MonoBehaviour
         {
             if (curStockage.stockage[i] != null) // if need to set a item
             {
-                items[i].InitialisationItem(curStockage.stockage[i].item, curStockage.stockage[i].count); // set item
+                SetItem(items[i], curStockage.stockage[i].item, curStockage.stockage[i].count); // set item
             } else 
             {
                 if (!items[i].isNull) // is a item
@@ -64,6 +69,12 @@ public class StockageUI : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator refreshGrid(float time)
+    {
+        yield return new WaitForSeconds(time);
+        gridLayout.Refresh();
     }
 
     private void SetSlot(int curSlotCount, int newSlotCount)
@@ -150,21 +161,28 @@ public class StockageUI : MonoBehaviour
                     {
                         countToAdd = maxStackItem;
                         count -= maxStackItem;
-                        item.InitialisationItem(newItem, countToAdd);
+                        SetItem(item, newItem, countToAdd);
                     } else
                     {
-                        item.InitialisationItem(newItem, count);
+                        SetItem(item, newItem, count);
                         return 0;
                     }
                 } else
                 {
-                    item.InitialisationItem(newItem);
+                    SetItem(item, newItem);
                     count--;
                     if (count <= 0) return 0;
                 }
             }
         }
         return count;
+    }
+
+    private void SetItem(ItemUI item, Item newItem, int count = 1)
+    {
+        item.InitialisationItem(newItem, count);
+        item.transform.parent.GetComponent<OneChildLayout>().Refresh();
+        item.GetComponent<OneChildLayout>().Refresh();
     }
 
     public void Open()

@@ -48,9 +48,17 @@ public class GridLayout : LayoutGroup
 
     [Min(0)] public Vector2 referenceCell = Vector2.one; // editor
 
+    public bool refreshEnable = true;
+
     #endregion
 
     public override void CalculateLayoutInputHorizontal()
+    {
+        if (refreshEnable)
+            Refresh();
+    }
+
+    public void Refresh()
     {
         base.CalculateLayoutInputHorizontal();
 
@@ -250,7 +258,6 @@ public class GridLayout : LayoutGroup
         {
             case GridFitType.BestFit:
             {
-                if(childFit == ChildFitType.AutoFill) childFit = ChildFitType.Square;
                 break;
             }
             case GridFitType.FixedColumns:
@@ -277,6 +284,7 @@ public class GridLayout : LayoutGroup
         {
             case ChildFitType.AutoFill:
             {
+                referenceCell = Vector2.one;
                 break;
             }
             case ChildFitType.FixedWidth:

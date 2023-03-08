@@ -14,6 +14,7 @@ public class GridLayoutEditor : Editor
     bool paddingOpen = true;
     bool childOpen = true;
     bool gridOpen = true;
+    bool advancedOpen = false;
 
     public override void OnInspectorGUI()
     {
@@ -66,7 +67,9 @@ public class GridLayoutEditor : Editor
             EditorGUILayout.Space(8f);
 
             gridLayout.cellSize = EditorGUILayout.Vector2Field("Cell Size", gridLayout.cellSize);
-            gridLayout.referenceCell = EditorGUILayout.Vector2Field("Cell Reference", gridLayout.referenceCell);
+
+            if (gridLayout.childFit == GridLayout.ChildFitType.RatioCell)
+                gridLayout.referenceCell = EditorGUILayout.Vector2Field("Cell Reference", gridLayout.referenceCell);
 
             EditorGUI.indentLevel--;
         }
@@ -80,6 +83,24 @@ public class GridLayoutEditor : Editor
             gridLayout.gridFit = (GridLayout.GridFitType) EditorGUILayout.EnumPopup("Grid Fit", gridLayout.gridFit);
             gridLayout.columns = EditorGUILayout.IntField("Columns", gridLayout.columns);
             gridLayout.rows = EditorGUILayout.IntField("Rows", gridLayout.rows);
+
+            EditorGUI.indentLevel--;
+        }
+        EditorGUILayout.EndFoldoutHeaderGroup();
+
+        advancedOpen = EditorGUILayout.BeginFoldoutHeaderGroup(advancedOpen, "Advanced");
+        if (advancedOpen)
+        {
+            EditorGUI.indentLevel++;
+
+            gridLayout.refreshEnable = EditorGUILayout.Toggle("Refresh Enable", gridLayout.refreshEnable);
+            if (!gridLayout.refreshEnable)
+            {
+                if(GUILayout.Button("Refresh"))
+                {
+                    gridLayout.Refresh();
+                }
+            }
 
             EditorGUI.indentLevel--;
         }

@@ -16,12 +16,20 @@ public class OneChildLayout : LayoutGroup
         FixedHeight
     }
 
-    public ChildFit childFit;
-    [Range(0,1)] public float proportion;
-    public Vector2 childSize;
-    public Vector2 referenceCell;
+    public ChildFit childFit; //editor
+    public Vector2 proportion; //editor
+    public Vector2 childSize; //editor
+    public Vector2 referenceCell; //editor
+
+    public bool refreshEnable = true;
 
     public override void CalculateLayoutInputHorizontal()
+    {
+        if (refreshEnable)
+            Refresh();
+    }
+
+    public void Refresh()
     {
         base.CalculateLayoutInputHorizontal();
 
@@ -31,7 +39,7 @@ public class OneChildLayout : LayoutGroup
         if (childCount != 1) return;
 
         Vector2 rect = rectTransform.rect.size;
-        Vector2 size = new Vector2(rect.x -padding.horizontal, rect.y - padding.vertical);
+        Vector2 size = new Vector2(rect.x - padding.horizontal, rect.y - padding.vertical);
 
         bool needStop = Restriction();
         if (needStop || size.x < 0 || size.y < 0)
@@ -62,10 +70,10 @@ public class OneChildLayout : LayoutGroup
                 return childSize;
             
             case ChildFit.FixedWidth:
-                return new Vector2(childSize.x, parentSize.y * proportion);
+                return new Vector2(childSize.x, parentSize.y * proportion.y);
             
             case ChildFit.FixedHeight:
-                return new Vector2(parentSize.x * proportion, childSize.y);
+                return new Vector2(parentSize.x * proportion.x, childSize.y);
         }
         return Vector2.one;
     }
@@ -86,7 +94,7 @@ public class OneChildLayout : LayoutGroup
                 break;
 
             case ChildFit.Proportion:
-                if (proportion <= 0) return true;
+                if (proportion.x <= 0 || proportion.y <= 0) return true;
                 break;
 
             case ChildFit.KeepRatio:

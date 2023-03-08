@@ -79,6 +79,9 @@ public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             DisableItem();
             newDropItem.InitialisationItem(item, count);
+            newDropItem.transform.parent.GetComponent<OneChildLayout>().Refresh();
+            newDropItem.GetComponent<OneChildLayout>().Refresh();
+
             dragFunction();
             newDropItem = null;
         }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1943617193049810343}
   - component: {fileID: 1943617193049810342}
   - component: {fileID: 1943617193049810341}
-  - component: {fileID: 1107493422666791213}
+  - component: {fileID: 3998530376887924687}
   m_Layer: 5
   m_Name: ItemUI
   m_TagString: Untagged
@@ -39,7 +39,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 50, y: -50}
-  m_SizeDelta: {x: 90, y: 90}
+  m_SizeDelta: {x: 63.5, y: 63.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1943617193049810343
 CanvasRenderer:
@@ -98,7 +98,7 @@ MonoBehaviour:
   isNull: 1
   newDropItem: {fileID: 0}
   parentTransform: {fileID: 0}
---- !u!114 &1107493422666791213
+--- !u!114 &3998530376887924687
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1943617193049810347}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Script: {fileID: 11500000, guid: f5170305f1b4e734b9b5ad902c6fcbcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -115,13 +115,12 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 8
-  m_StartCorner: 0
-  m_StartAxis: 1
-  m_CellSize: {x: 70, y: 35}
-  m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_ChildAlignment: 7
+  childFit: 1
+  proportion: {x: 1, y: 0.4}
+  childSize: {x: 63.5, y: 25.4}
+  referenceCell: {x: 0, y: 0}
+  refreshEnable: 0
 --- !u!1 &1943617193460469873
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,8 +156,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 90, y: -90}
-  m_SizeDelta: {x: 70, y: 35}
+  m_AnchoredPosition: {x: 63.5, y: -63.5}
+  m_SizeDelta: {x: 63.5, y: 25.4}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &1943617193460469868
 CanvasRenderer:
@@ -215,7 +214,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.3
+  m_fontSize: 22.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -413,6 +412,7 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 4
   childFit: 1
-  proportion: 0.9
-  childSize: {x: 90, y: 90}
-  referenceCell: {x: 1, y: 1.68}
+  proportion: {x: 0.9, y: 0.9}
+  childSize: {x: 63.5, y: 63.5}
+  referenceCell: {x: 100, y: 80}
+  refreshEnable: 0
