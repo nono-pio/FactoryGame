@@ -50,6 +50,11 @@ public class GridLayout : LayoutGroup
 
     public bool refreshEnable = true;
 
+    public ChildUse childUse;
+    public int fixedChild;
+
+    private Vector2 realSize;
+
     #endregion
 
     public override void CalculateLayoutInputHorizontal()
@@ -60,9 +65,11 @@ public class GridLayout : LayoutGroup
 
     public void Refresh()
     {
+        Debug.Log("Grid");
+
         base.CalculateLayoutInputHorizontal();
 
-        int childCount = rectChildren.Count;
+        int childCount = GetChildCount();
 
         bool needStop = Restriction(childCount);
         if (needStop) return;
@@ -82,7 +89,7 @@ public class GridLayout : LayoutGroup
             realParentHeight = height - spacing.y - padding.vertical;
         }
 
-        Vector2 realSize = new Vector2(realParentWidth, realParentHeight);
+        realSize = new Vector2(realParentWidth, realParentHeight);
         if (realSize.x <= 0 || realSize.y <= 0) return;
 
         GetRowsColumns(realSize, childCount);
@@ -92,6 +99,17 @@ public class GridLayout : LayoutGroup
         Vector2 restSize = GetRestWidthHeight(realSize, childCount);
 
         SetChild(childCount, restSize);
+    }
+
+    private int GetChildCount()
+    {
+        switch (childUse)
+        {
+            case ChildUse.ActiveChild : return rectChildren.Count;
+            case ChildUse.AllChildren : return transform.childCount;
+            case ChildUse.FixedChild : return fixedChild;
+        }
+        return 1;
     }
 
     private void GetRowsColumns(Vector2 realSize,int childCount )
@@ -224,15 +242,22 @@ public class GridLayout : LayoutGroup
 
         int rowsCount, columnsCount;
 
-        float spacingX = (spacingFitGridSize ? rectTransform.rect.width * spacing.x : spacing.x) / (float) (columns - 1);
-        float spacingY = (spacingFitGridSize ? rectTransform.rect.height * spacing.y : spacing.y) / (float) (rows - 1);
+        float spacingX;
+        if (columns > 1) spacingX = (spacingFitGridSize ? rectTransform.rect.width * spacing.x : spacing.x) / (float) (columns - 1);
+        else spacingX = 0;
+        
+        float spacingY;
+        if (rows > 1) spacingY = (spacingFitGridSize ? rectTransform.rect.height * spacing.y : spacing.y) / (float) (rows - 1);
+        else spacingY = 0;
 
         for (int i = 0; i < childCount; i++)
         {
             rowsCount = startTop ? i / columns : (rows - 1) - i / columns;
             columnsCount = startLeft ? i % columns : (columns - 1) - i % columns;
 
-            var item = rectChildren[i];
+            if (i >= transform.childCount || i < 0) continue;
+            var item = transform.GetChild(i).GetComponent<RectTransform>();
+            if (item == null) continue;
 
             var xPos = (cellSize.x + spacingX) * columnsCount + padding.left + childAli.x;
             var yPos = (cellSize.y + spacingY) * rowsCount + padding.top + childAli.y;

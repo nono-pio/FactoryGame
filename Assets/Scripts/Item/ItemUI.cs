@@ -54,7 +54,7 @@ public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     [HideInInspector] public ItemUI newDropItem;
 
-    [HideInInspector] public Transform parentTransform;
+    private Transform parentTransform;
 
     [HideInInspector] public delegate void DragFunction();
     [HideInInspector] public DragFunction dragFunction;
@@ -74,6 +74,9 @@ public class ItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     {
         image.raycastTarget = true;
         transform.SetParent(parentTransform);
+
+        transform.parent.GetComponent<OneChildLayout>().Refresh();
+        GetComponent<OneChildLayout>().Refresh();
 
         if (newDropItem != null)
         {

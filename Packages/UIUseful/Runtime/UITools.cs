@@ -11,3 +11,9 @@ public static class UITools
     }
 }
 
+public enum ChildUse
+{
+    ActiveChild,
+    AllChildren,
+    FixedChild
+}

@@ -49,7 +49,8 @@ public class StockageUI : MonoBehaviour
         typeStockage = stockageType;
 
         Refresh();
-        StartCoroutine(refreshGrid(0.01f));
+        gridLayout.fixedChild = stockage.slotCount;
+        gridLayout.Refresh();
 
         stockage.isUpdate = false;
     }
@@ -69,12 +70,6 @@ public class StockageUI : MonoBehaviour
                 }
             }
         }
-    }
-
-    private IEnumerator refreshGrid(float time)
-    {
-        yield return new WaitForSeconds(time);
-        gridLayout.Refresh();
     }
 
     private void SetSlot(int curSlotCount, int newSlotCount)

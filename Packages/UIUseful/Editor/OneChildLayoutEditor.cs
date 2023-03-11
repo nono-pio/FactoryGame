@@ -19,6 +19,7 @@ public class OneChildLayoutEditor : Editor
     {
         oneChildLayout = (OneChildLayout) target;
 
+        EditorGUI.BeginChangeCheck();
         paddingOpen = EditorGUILayout.BeginFoldoutHeaderGroup(paddingOpen, "Padding");
         if (paddingOpen)
         {
@@ -95,6 +96,8 @@ public class OneChildLayoutEditor : Editor
         }
         EditorGUILayout.EndFoldoutHeaderGroup();
 
-        oneChildLayout.CalculateLayoutInputHorizontal();
+        bool isChange = EditorGUI.EndChangeCheck();
+        if (isChange)
+            oneChildLayout.CalculateLayoutInputHorizontal();
     }
 }

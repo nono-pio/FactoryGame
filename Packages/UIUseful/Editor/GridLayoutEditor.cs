@@ -22,6 +22,7 @@ public class GridLayoutEditor : Editor
 
         gridLayout = (GridLayout) target;
 
+        EditorGUI.BeginChangeCheck();
         paddingOpen = EditorGUILayout.BeginFoldoutHeaderGroup(paddingOpen, "Padding");
         if (paddingOpen)
         {
@@ -102,10 +103,20 @@ public class GridLayoutEditor : Editor
                 }
             }
 
+            gridLayout.childUse = (ChildUse)EditorGUILayout.EnumPopup("Child use", gridLayout.childUse);
+            if (gridLayout.childUse == ChildUse.FixedChild)
+            {
+                gridLayout.fixedChild = EditorGUILayout.IntField("Fixed Child", gridLayout.fixedChild);
+                if (gridLayout.fixedChild > 500) gridLayout.fixedChild = 500;
+                else if (gridLayout.fixedChild < 1)gridLayout.fixedChild = 1; 
+            }
+
             EditorGUI.indentLevel--;
         }
         EditorGUILayout.EndFoldoutHeaderGroup();
+        bool isChange = EditorGUI.EndChangeCheck();
 
-        gridLayout.CalculateLayoutInputHorizontal();
+        if(isChange)
+            gridLayout.CalculateLayoutInputHorizontal();
     }
 }
