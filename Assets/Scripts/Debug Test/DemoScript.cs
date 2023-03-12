@@ -8,6 +8,8 @@ public class DemoScript : MonoBehaviour
 
     [SerializeField] private bool removeAll;
 
+    [SerializeField] private CircleLayout circleLayout;
+
     private void Start() {SetInputDeguger(InputManager.instance.GetDebugInput());}
 
     private void SetInputDeguger(AllInput.DebugActions debugInput)
