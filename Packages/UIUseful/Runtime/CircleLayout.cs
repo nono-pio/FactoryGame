@@ -7,7 +7,8 @@ public class CircleLayout : LayoutGroup
     public enum LayerFitType
     {
         Auto,
-        Fixed
+        Fixed,
+        Custom
     }
 
     public enum RayonFitType
@@ -17,21 +18,36 @@ public class CircleLayout : LayoutGroup
         Fixed
     }
 
-    public int Layer;
-    public LayerFitType layerFitType;
+    public enum ChildFitType
+    {
+        FixedSize,
+        FixedWidth,
+        FixedHeight,
+        Square,
+        Circle,
+        Ratio
+    }
 
-    public bool useCenter;
+    public int Layer; //editor
+    public LayerFitType layerFitType; //editor
+    public float slope, intercept, firstLayerChildMax;
+
+    public bool useCenter; //editor
     public bool isCenter = false;
 
-    public float rayon;
-    public RayonFitType rayonFitType;
-    [Range(0, 1)] public float proportion; 
+    public float rayon; //editor
+    public RayonFitType rayonFitType; //editor
+    [Range(0, 1)] public float proportion; //editor
 
-    public Vector2 childSize;
+    public ChildFitType childFitType; //editor
+    public Vector2 childSize; //editor
+    public Vector2 referenceCell; //editor
 
-    public bool setRotation;
+    public float spacing; //editor
 
-    public bool refreshEnable = true;
+    public bool setRotation; //editor
+
+    public bool refreshEnable = true; //editor
 
     public void Refresh()
     {
@@ -48,6 +64,10 @@ public class CircleLayout : LayoutGroup
 
         getLayer(child);
         int[] childPerLayer = getChildPerLayer(child);
+        foreach (var c in childPerLayer)
+        {
+            //Debug.Log(c);
+        }
 
         if(childPerLayer == null) return;
 
@@ -57,12 +77,31 @@ public class CircleLayout : LayoutGroup
 
         Vector2 restSize = getRest(realSizeParent);
 
+        int indexLayer = 0, childInLayer = 0;
+        Vector2 curChildSizeLayer = getChildSize(childPerLayer[indexLayer], indexLayer);
+        bool setSizeCenter = isCenter ? false : true;
         for (int i = 0; i < child; i++)
         {
+
+            if (!setSizeCenter)
+            {
+                setSizeCenter = true;
+                childInLayer--;
+            }else if (childInLayer > childPerLayer[indexLayer])
+            {
+                indexLayer++;
+                childInLayer = 1;
+                curChildSizeLayer = getChildSize(childPerLayer[indexLayer], indexLayer);
+            }
+
             var item = rectChildren[i];
             if (setRotation) item.rotation = rotation[i];
-            SetChildAlongAxis(item, 0, position[i].x + rayon + restSize.x, childSize.x);
-            SetChildAlongAxis(item, 1, position[i].y + rayon + restSize.y, childSize.y);
+            else item.rotation = new Quaternion();
+
+            SetChildAlongAxis(item, 0, position[i].x + rayon + restSize.x, curChildSizeLayer.x);
+            SetChildAlongAxis(item, 1, position[i].y + rayon + restSize.y, curChildSizeLayer.y);
+
+            childInLayer++;
         }
     }
 
@@ -76,9 +115,18 @@ public class CircleLayout : LayoutGroup
         switch (layerFitType)
         {
             case LayerFitType.Auto:
-                Layer = Mathf.CeilToInt((Mathf.Sqrt(1 + 4 / 3 * child) - 1) / 2);
+                Layer = Mathf.CeilToInt((Mathf.Sqrt(1 + 1.33333333f * child) - 1) / 2);
                 break;
             case LayerFitType.Fixed:
+                break;
+            case LayerFitType.Custom:
+                Vector2[] root = UITools.thirdDegreeRoot(-slope/6, intercept/2, slope/6 - intercept/2 - firstLayerChildMax, child);
+                foreach (var r in root)
+                    if (r.y == 0)
+                    {
+                        Layer = Mathf.CeilToInt(r.x);
+                        break;
+                    }
                 break;
         }
     }
@@ -89,24 +137,34 @@ public class CircleLayout : LayoutGroup
         if(useCenter)
         {
             child--;
-            if (Mathf.RoundToInt(2 * (child / (float)(Layer * (Layer + 1)))) >= 6)
+            if (layerFitType == LayerFitType.Custom)
             {
-                isCenter = true;
-            }
-            else
+                isCenter = Mathf.RoundToInt(child/ (float) Layer - slope/6 *(Layer*Layer -1) + intercept/2 * (Layer - 1)) >= firstLayerChildMax;
+                if (!isCenter) child++;
+            } else 
             {
-                isCenter = false;
-                child++;
+                if (Mathf.RoundToInt(2 * (child / (float)(Layer * (Layer + 1)))) >= 6)
+                {
+                    isCenter = true;
+                }
+                else
+                {
+                    isCenter = false;
+                    child++;
+                } 
             }
         } else
             isCenter = false;
 
         float[] childPerLayer = new float[Layer];
-        childPerLayer[0] = 2 * (child / (float)(Layer * (Layer + 1)));
+        childPerLayer[0] = (layerFitType == LayerFitType.Custom)? child/ (float) Layer - slope/6 *(Layer*Layer -1) + intercept/2 * (Layer - 1) : 2 * (child / (float)(Layer * (Layer + 1)));
+        //Debug.Log(childPerLayer[0]);
 
+        float ratio = childPerLayer[0]/firstLayerChildMax;
         for (int k = 1; k < Layer; k++)
         {
-            childPerLayer[k] = (k + 1) * childPerLayer[0];
+            childPerLayer[k] = childPerLayer[k - 1] + (slope * k + intercept) * ratio;
+            //Debug.Log(childPerLayer[k]);
         }
 
         int[] new_childPerLayer = new int[Layer];
@@ -223,10 +281,44 @@ public class CircleLayout : LayoutGroup
         return rotation;
     }
 
+    public Vector2 getChildSize(int childLayer, int indexLayer)
+    {
+        float distance = Mathf.Min(2 * (rayon / Layer) * (indexLayer + 1) * Mathf.Sin(Mathf.PI / childLayer), rayon/Layer) - spacing;
+        switch (childFitType)
+        {
+            case ChildFitType.FixedSize:
+                return childSize;
+            case ChildFitType.FixedHeight:
+                return new Vector2(distance / 1.414f, childSize.y);
+            case ChildFitType.FixedWidth:
+                return new Vector2(childSize.x, distance / 1.414f);
+            case ChildFitType.Square:
+                return Vector2.one * distance / 1.414f;
+            case ChildFitType.Circle:
+                return Vector2.one * distance;
+        }
+        return Vector2.zero;
+    }
+
     public bool Restriction(int child)
     {
         if (child <= 0) return true;
-        if (layerFitType == LayerFitType.Fixed && Layer <= 0) return true;
+        switch (layerFitType)
+        {
+            case LayerFitType.Auto:
+                slope = 0;
+                intercept = 6;
+                firstLayerChildMax = 6;
+                break;
+            case LayerFitType.Fixed:
+                slope = 0;
+                intercept = 6;
+                firstLayerChildMax = 6;
+                if (Layer == 0) return true;
+                break;
+            case LayerFitType.Custom:
+                break;
+        }
 
         if(rayonFitType == RayonFitType.Auto) proportion = 1;
 
