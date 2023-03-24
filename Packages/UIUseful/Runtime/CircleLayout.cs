@@ -42,6 +42,7 @@ public class CircleLayout : LayoutGroup
     public ChildFitType childFitType; //editor
     public Vector2 childSize; //editor
     public Vector2 referenceCell; //editor
+    public float Offset;
 
     public float spacing; //editor
 
@@ -64,10 +65,6 @@ public class CircleLayout : LayoutGroup
 
         getLayer(child);
         int[] childPerLayer = getChildPerLayer(child);
-        foreach (var c in childPerLayer)
-        {
-            //Debug.Log(c);
-        }
 
         if(childPerLayer == null) return;
 
@@ -216,7 +213,7 @@ public class CircleLayout : LayoutGroup
         }
 
         int childLayer;
-        float ThetaToAdd = 0, Theta;
+        float ThetaToAdd = Offset * Mathf.Deg2Rad, Theta;
         float rayonLayer = rayon / (float)Layer;
         float r;
         int index = isCenter ? 1 : 0;
@@ -255,7 +252,7 @@ public class CircleLayout : LayoutGroup
         }
 
         int childLayer;
-        float ThetaToAdd = 0, Theta;
+        float ThetaToAdd = -Offset, Theta;
         int index = isCenter ? 1 : 0;
 
         for (int k = 0; k < childPerLayer.Length; k++)
@@ -287,7 +284,7 @@ public class CircleLayout : LayoutGroup
         switch (childFitType)
         {
             case ChildFitType.FixedSize:
-                return childSize;
+                return childSize - new Vector2(spacing, spacing);
             case ChildFitType.FixedHeight:
                 return new Vector2(distance / 1.414f, childSize.y);
             case ChildFitType.FixedWidth:

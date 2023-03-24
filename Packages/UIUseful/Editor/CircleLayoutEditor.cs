@@ -86,7 +86,8 @@ public class CircleLayoutEditor : Editor
             circleLayout.setRotation = EditorGUILayout.Toggle("Rotation", circleLayout.setRotation);
 
             EditorGUILayout.Space(8f);
-
+            
+            circleLayout.Offset = EditorGUILayout.FloatField("Offset", circleLayout.Offset);
             circleLayout.childSize = EditorGUILayout.Vector2Field("Child Size", circleLayout.childSize);
 
             if (circleLayout.childFitType == CircleLayout.ChildFitType.Ratio)
